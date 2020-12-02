@@ -12,12 +12,33 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
   php:
-    image: php:7.3.0-fpm-alpine3.8
+    #image: php:7.3.0-fpm-alpine3.8
+    image: php:dev
+    #user: "82:82" # www-data/www-data
     ports:
       - "9000:9000"
+    depends_on:
+      - db
     volumes:
       - ./www:/usr/share/nginx/html
       - ./php/php.ini:/usr/local/etc/php/php.ini
       - ./php/php-fpm.conf:/usr/local/etc/php-fpm.conf
       - ./php/php-fpm-www.conf:/usr/local/etc/php-fpm.d/www.conf
     working_dir: /usr/share/nginx/html
+  db:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - 0.0.0.0:3306:3306
+    environment:
+      MYSQL_USER: teamkit
+      MYSQL_PASSWORD: teamkitpwd
+      MYSQL_DATABASE: teamkits-db
+      MYSQL_ROOT_PASSWORD: rootpwd
+    volumes:
+      - ./db:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --explicit_defaults_for_timestamp=ON
+      - --default-authentication-plugin=mysql_native_password

@@ -1,4 +1,7 @@
+db/
 tmp/
+logs/
+
 *.log
 .DS_Store
 composer.phar
